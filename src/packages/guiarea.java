@@ -4,8 +4,13 @@
  */
 package packages;
 
+import java.awt.Dimension;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isAlphabetic;
+import static java.lang.Character.isUpperCase;
+import static java.lang.Character.isLowerCase;
+import static java.lang.Character.isISOControl;
+import static java.lang.Character.isWhitespace;
 import static java.lang.Character.toLowerCase;
 import static java.lang.String.valueOf;
 
@@ -22,14 +27,18 @@ public class guiarea extends javax.swing.JFrame {
      */
     public guiarea() {
 	initComponents();
+	
+	setMinimumSize(new Dimension(660, 620));
+	setTitle("String Info - CIT-1156");
     }
     
     private boolean isPalindrome(String inputString) {
-	// Sanitize input - remove non letter/digit characters, convert to lowercase, remove whitespace
 	StringBuilder sanitizedString = new StringBuilder();
 	
+	// Sanitize input - remove non letter/digit characters, convert to lowercase, remove whitespace
 	for (int i = 0; i < inputString.length(); i++) {
 	    char currentChar = toLowerCase(inputString.charAt(i));
+	    
 	    if (isDigit(currentChar) || isAlphabetic(currentChar)) {
 		sanitizedString.append(currentChar);
 	    }
@@ -40,6 +49,37 @@ public class guiarea extends javax.swing.JFrame {
 	
 	// Check for equality between stored string and reversed string
 	return originalString.equals(reversedString);
+    }
+    
+    private int[] stringStats(String inputString) {
+	int[] charTypes = new int[6];
+	
+	for (int i = 0; i < inputString.length(); i++) {
+	    char currentChar = inputString.charAt(i);
+	    
+	    if (isAlphabetic(currentChar)) {
+		charTypes[0]++; // Array index for alphabetic characters
+		
+		if (isLowerCase(currentChar)) {
+		    charTypes[3]++; // Array index for lowercase characters
+		}
+		else if (isUpperCase(currentChar)) {
+		    charTypes[4]++; // Array index for uppercase characters
+		}
+	    }
+	    else if (isDigit(currentChar)) {
+		charTypes[1]++; // Array index for digit characters
+	    }
+	    else if (isISOControl(currentChar)) {
+		charTypes[2]++; // Array index for control characters
+	    }
+	    else if (isWhitespace(currentChar)) {
+		charTypes[5]++; // Array index for whitespace characters
+	    }
+	    
+	}
+	
+	return charTypes;
     }
 
     /**
@@ -69,8 +109,10 @@ public class guiarea extends javax.swing.JFrame {
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Liberation Sans", 0, 30)); // NOI18N
+        jLabel1.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         jLabel2.setFont(new java.awt.Font("Liberation Sans", 0, 30)); // NOI18N
+        jLabel2.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -80,16 +122,12 @@ public class guiarea extends javax.swing.JFrame {
                 .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 945, Short.MAX_VALUE))
-                        .addGap(15, 15, 15))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
                         .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(74, 74, 74)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(51, 51, 51))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 945, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -100,9 +138,9 @@ public class guiarea extends javax.swing.JFrame {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(162, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         pack();
@@ -110,11 +148,23 @@ public class guiarea extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (isPalindrome(jTextArea1.getText())) {
-	    jLabel1.setText("The inputted text IS a palindrome");
+	    jLabel1.setText("<html>The inputted text IS a palindrome</html>");
 	}
 	else {
-	    jLabel1.setText("The inputted text IS NOT a palindrome");
+	    jLabel1.setText("<html>The inputted text IS NOT a palindrome</html>");
 	}
+	
+	int[] charTypes = stringStats(jTextArea1.getText());
+	
+	String characterTypesOutput = String.format("<html>Alphabetic Characters: %d<br>"
+		+ "Numeric Characters: %d<br>"
+		+ "Control Characters: %d<br>"
+		+ "Lowercase Characters: %d<br>"
+		+ "Uppercase Characters: %d<br>"
+		+ "Whitespace Characters: %d</html>",
+		charTypes[0], charTypes[1], charTypes[2], charTypes[3], charTypes[4], charTypes[5]);
+	
+	jLabel2.setText(characterTypesOutput);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
